@@ -121,6 +121,10 @@ def get_args():
                         help='frequency of result logging (default: 100)')
     parser.add_argument('--seed', type=int, default=1111,
                         help='random seed')
+
+    #federated learning configs 
+    parser.add_argument('--clients', type=int, default=30)
+    parser.add_argument('--samples', type=int, default=10)
     args = parser.parse_args()
     return args
 
