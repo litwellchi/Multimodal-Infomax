@@ -1,9 +1,12 @@
-import numpy as np
+import time
 import copy
 import torch
+import numpy as np
 import torch.nn as nn
 
 from solver import Solver
+from utils.eval_metrics import *
+from utils.tools import *
 
 class FedSolver(Solver):
     def __init__(self, hyp_params, train_loader, dev_loader, test_loader, is_train=True, model=None, pretrained_emb=None):
@@ -11,6 +14,7 @@ class FedSolver(Solver):
 
     def train_and_eval(self):
         for epoch in range(self.hp.num_epochs):
+            start_time = time.time()
             w_locals = []
             self.model.train()
             net_glob = self.model.state_dict()
@@ -19,6 +23,7 @@ class FedSolver(Solver):
                 self.hp.clients, self.hp.samples, replace=False)
 
             for idx in idxs_users:
+                print(f'training client {idx}...')
                 client_config = self.hp
                 client_config.num_epochs = 2
                 lc_model = copy.deepcopy(self.model)
@@ -36,7 +41,25 @@ class FedSolver(Solver):
             
             net_glob = self.FedAvg(w_locals)
             self.model.load_state_dict(net_glob)
-            self.eval(self.model, nn.L1Loss())
+            self.evaluate(self.model, nn.L1Loss())
+
+            val_loss, _, _ = self.evaluate(self.model, self.criterion, test=False)
+            test_loss, results, truths = self.evaluate(self.model, self.criterion, test=True)
+            
+            self.scheduler_main.step(val_loss)    # Decay learning rate by validation loss
+
+            # validation F1
+            print("-"*50)
+            print('Server Epoch {:2d} | Time {:5.4f} sec | Valid Loss {:5.4f} | Test Loss {:5.4f}'.format(epoch, time.time()-start_time, val_loss, test_loss))
+            print("-"*50)
+
+        if self.hp.dataset in ["mosei_senti", "mosei"]:
+            eval_mosei_senti(results, truths, True)
+        elif self.hp.dataset == 'mosi':
+            self.best_dict = eval_mosi(results, truths, True)
+        elif self.hp.dataset == 'iemocap':
+            eval_iemocap(results, truths)      
+
 
     def evaluate(self, model, criterion, test=False):
             model.eval()

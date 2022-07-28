@@ -303,28 +303,28 @@ class Solver(object):
                 elif test_loss < best_mae:
                     best_epoch = epoch
                     best_mae = test_loss
-                    if self.hp.dataset in ["mosei_senti", "mosei"]:
-                        eval_mosei_senti(results, truths, True)
+                    # if self.hp.dataset in ["mosei_senti", "mosei"]:
+                    #     eval_mosei_senti(results, truths, True)
 
-                    elif self.hp.dataset == 'mosi':
-                        eval_mosi(results, truths, True)
-                    elif self.hp.dataset == 'iemocap':
-                        eval_iemocap(results, truths)
+                    # elif self.hp.dataset == 'mosi':
+                    #     eval_mosi(results, truths, True)
+                    # elif self.hp.dataset == 'iemocap':
+                        # eval_iemocap(results, truths)
                     
                     best_results = results
                     best_truths = truths
-                    print(f"Saved model at pre_trained_models/MM.pt!")
+                    # print(f"Saved model at pre_trained_models/MM.pt!")
                     save_model(self.hp, model)
-            else:
-                patience -= 1
-                if patience == 0:
-                    break
+            # else:
+            #     patience -= 1
+            #     if patience == 0:
+            #         break
 
-        print(f'Best epoch: {best_epoch}')
-        if self.hp.dataset in ["mosei_senti", "mosei"]:
-            eval_mosei_senti(best_results, best_truths, True)
-        elif self.hp.dataset == 'mosi':
-            self.best_dict = eval_mosi(best_results, best_truths, True)
-        elif self.hp.dataset == 'iemocap':
-            eval_iemocap(results, truths)       
+        # print(f'Best epoch: {best_epoch}')
+        # if self.hp.dataset in ["mosei_senti", "mosei"]:
+        #     eval_mosei_senti(best_results, best_truths, True)
+        # elif self.hp.dataset == 'mosi':
+        #     self.best_dict = eval_mosi(best_results, best_truths, True)
+        # elif self.hp.dataset == 'iemocap':
+        #     eval_iemocap(results, truths)       
         sys.stdout.flush()
