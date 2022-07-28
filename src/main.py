@@ -23,7 +23,7 @@ if __name__ == '__main__':
     args = get_args()
     dataset = str.lower(args.dataset.strip())
     
-    set_seed(args.seed)
+    # set_seed(args.seed)
     print("Start loading the data....")
     train_config = get_config(dataset, mode='train', batch_size=args.batch_size)
     valid_config = get_config(dataset, mode='valid', batch_size=args.batch_size)

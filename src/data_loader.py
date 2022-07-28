@@ -121,14 +121,14 @@ def get_loader(hp, config, shuffle=True):
         ## BERT-based features input prep
 
         # SENT_LEN = min(sentences.size(0),50)
-        SENT_LEN = 50
+        SENT_LEN = sentences.size(0)
         # Create bert indices using tokenizer
 
         bert_details = []
         for sample in batch:
             text = " ".join(sample[0][3])
             encoded_bert_sent = bert_tokenizer.encode_plus(
-                text, max_length=SENT_LEN, add_special_tokens=True, truncation=True, padding='max_length')
+                text, max_length=SENT_LEN+2, add_special_tokens=True, pad_to_max_length=True)
             bert_details.append(encoded_bert_sent)
 
         # Bert things are batch_first
@@ -147,6 +147,7 @@ def get_loader(hp, config, shuffle=True):
         dataset=dataset,
         batch_size=config.batch_size,
         shuffle=shuffle,
-        collate_fn=collate_fn)
+        collate_fn=collate_fn
+        )
 
     return data_loader

@@ -126,6 +126,7 @@ class Solver(object):
                 mem_neg_va = []
 
             for i_batch, batch_data in enumerate(self.train_loader):
+                i_batch = 0
                 text, visual, vlens, audio, alens, y, l, bert_sent, bert_sent_type, bert_sent_mask, ids = batch_data
 
                 # for mosei we only use 50% dataset in stage 1
