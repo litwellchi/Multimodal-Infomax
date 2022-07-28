@@ -1,3 +1,4 @@
+from imageio import imopen
 import torch
 import argparse
 import numpy as np
@@ -5,6 +6,7 @@ import numpy as np
 from utils import *
 from torch.utils.data import DataLoader
 from solver import Solver
+from fed_solver import FedSolver
 from config import get_args, get_config, output_dim_dict, criterion_dict
 from data_loader import get_client_loaders, get_loader
 
@@ -51,6 +53,6 @@ if __name__ == '__main__':
     args.n_class = output_dim_dict.get(dataset, 1)
     args.criterion = criterion_dict.get(dataset, 'MSELoss')
 
-    solver = Solver(args, train_loader=train_loaders[0], dev_loader=valid_loader,
+    solver = FedSolver(args, train_loader=train_loaders, dev_loader=valid_loader,
                     test_loader=test_loader, is_train=True)
     solver.train_and_eval()
